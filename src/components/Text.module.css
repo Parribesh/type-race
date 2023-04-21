@@ -3,3 +3,13 @@
   color: blue;
   text-decoration: line-through;
 }
+
+.matched_letter {
+  font-weight: 500;
+  color: green;
+}
+
+.unmatched_letter {
+  font-weight: 500;
+  color: rgb(240, 136, 9);
+}

@@ -9,6 +9,9 @@ export default function () {
   const [textArray, setTextArray] = useState([]);
   const [textElements, setTextElements] = useState([]);
   const [wordToCheck, setWordToCheck] = useState();
+  const [currentIndex, setCurrentIndex] = useState(-1);
+  const [timer, setTimer] = useState(0);
+  const [start, setStart] = useState(false);
 
   let spaceCounter = 0;
 
@@ -16,7 +19,7 @@ export default function () {
     let boxArray = [];
     text.props.children
       .split(" ")
-      .map((e: string) => boxArray.push([e, false]));
+      .map((e: string, key: Number) => boxArray.push([e, false, key]));
     setTextArray(boxArray);
   }, []);
 
@@ -24,9 +27,26 @@ export default function () {
     let currentArray = textArray.find((e) => e[1] == false);
     if (currentArray != null) {
       setWordToCheck(currentArray[0]);
+      setCurrentIndex((prevState) => prevState + 1);
       setTypedText("");
     }
   }, [textArray]);
+
+  useEffect(() => {
+    if (start) {
+      setTimeout(() => {
+        setTimer((prevTime) => prevTime + 1);
+        console.log("timer:", timer);
+        if (timer >= 10) {
+          setStart(false);
+        }
+      }, 1000);
+    }
+  }, [timer, start]);
+
+  const handleStart = () => {
+    setStart(true);
+  };
 
   const handleChange = (e: any) => {
     setTypedText(e.target.value);
@@ -41,6 +61,10 @@ export default function () {
         bgColor="grey"
       >
         Type-Race
+      </Flex>
+
+      <Flex fontSize="3xl" justifyContent={"center"}>
+        :{timer}
       </Flex>
 
       {/* test */}
@@ -60,10 +84,11 @@ export default function () {
         backgroundColor={"gray.200"}
       >
         <Flex width={"75%"} flexWrap={"wrap"}>
-          {textArray.map((e: [string, boolean], k: any) => {
+          {textArray.map((e: [string, boolean, Number], k: any) => {
             return (
               <Box key={k}>
                 <WordChecker
+                  index={currentIndex}
                   word_prop={e}
                   toCheck={wordToCheck}
                   typed_array={typedText}
